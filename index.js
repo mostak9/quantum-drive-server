@@ -11,7 +11,7 @@ app.use(express.json());
 
 
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.USER}:${process.env.PASS}@cluster0.6nmlwzx.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -39,11 +39,20 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result);
     })
+
+    // get brand wise products
     app.get('/products/:name', async(req, res) => {
       const brandName = req.params.name;
       const query = {brand: brandName};
       const cursor = productCollection.find(query);
       const result = await cursor.toArray();
+      res.send(result);
+    })
+    // get single product in terms of product id
+    app.get('/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+      const result = await productCollection.findOne(query);
       res.send(result);
     })
 
