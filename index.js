@@ -69,6 +69,12 @@ async function run() {
       const result = await cartCollection.findOne(query);
       res.send(result);
     })
+    // get all cart items
+    app.get('/carts/myCart', async (req, res) => {
+      const cursor = cartCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    })
 
 
     app.put('/update/:id', async(req, res)  => {
