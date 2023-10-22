@@ -63,7 +63,12 @@ async function run() {
       res.send(result);
     })
     // get a single cart product
-    
+    app.get('/cart/:id', async(req, res) => {
+      const id = req.params.id;
+      const query = {_id:  id};
+      const result = await cartCollection.findOne(query);
+      res.send(result);
+    })
 
 
     app.put('/update/:id', async(req, res)  => {
