@@ -28,6 +28,7 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
     const productCollection = client.db('clientDB').collection('products');
+    const cartCollection = client.db('clientDB').collection('cart');
     app.post('/products', async  (req, res) =>  {
       const product = req.body;
       const result = await  productCollection.insertOne(product);
@@ -55,10 +56,36 @@ async function run() {
       const result = await productCollection.findOne(query);
       res.send(result);
     })
+    // post a single product to the cart
+    app.post('/cart', async(req, res)  => {
+      const product = req.body;
+      const result = await cartCollection.insertOne(product);
+      res.send(result);
+    })
+    // get a single cart product
+    
 
 
-    app.get('/users', async(req, res) => {
-        res.send('This is user directory')
+    app.put('/update/:id', async(req, res)  => {
+      const id = req.params.id;
+    
+      const updateProduct = req.body;
+      const {name, image, price, rating, brand, type, details} = updateProduct;
+      const filter = {_id: new ObjectId(id)};
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: {
+          name: name,
+          image: image,
+          price: price,
+          rating: rating,
+          brand: brand,
+          type: type,
+          details: details
+        }
+      }
+      const result = await productCollection.updateOne(filter, updateDoc, options);
+      res.send(result)
     })
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
